@@ -7,6 +7,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from git import Repo
 import git
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -110,7 +113,8 @@ async def analyze_repo_post(request: RepoRequest):
     chunks = text_splitter.split_documents(documents)
 
     # --- Google Embeddings ---
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004",
+    google_api_key=os.getenv("GOOGLE_API_KEY"))
     vectorstore = FAISS.from_documents(chunks, embeddings)
 
     # --- Gemini LLM ---
